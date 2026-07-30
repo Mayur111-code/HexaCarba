@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+@utility glass {
+  background-color: rgb(255 255 255 / 0.05);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgb(255 255 255 / 0.1);
+  border-radius: 1rem;
+}
+
+/* Administrative workspace: intentionally light and low-noise for data-heavy tasks. */
+.admin-shell {
+  background-image: radial-gradient(circle at 100% 0%, rgb(219 234 254 / 0.62), transparent 27rem);
+}
+
+.admin-shell button,
+.admin-shell a,
+.admin-shell input,
+.admin-shell select,
+.admin-shell textarea {
+  &:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+  }
+}
+
+.admin-shell table tbody tr { transition: background-color 160ms ease; }
+
+@media (max-width: 640px) { .admin-shell main { padding-bottom: 2rem; } }
+
+@utility glass-hover {
+  background-color: rgb(255 255 255 / 0.05);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgb(255 255 255 / 0.1);
+  border-radius: 1rem;
+  transition: all 0.5s;
+  &:hover {
+    background-color: rgb(255 255 255 / 0.1);
+    border-color: rgb(255 255 255 / 0.2);
+    box-shadow: 0 0 30px rgb(59 130 246 / 0.15);
+  }
+}
+
+@utility gradient-text {
+  background-image: linear-gradient(to right, #60a5fa, #67e8f9, #3b82f6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@layer base {
+  * {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-black text-white antialiased;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  }
+
+  ::selection {
+    background-color: rgb(59 130 246 / 0.3);
+    color: white;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: black;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgb(255 255 255 / 0.2);
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgb(255 255 255 / 0.3);
+  }
+}
+
+.skeleton {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  background-color: rgb(255 255 255 / 0.1);
+  border-radius: 0.25rem;
+}
+
+.text-balance {
+  text-wrap: balance;
+}
