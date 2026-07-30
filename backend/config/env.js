@@ -16,7 +16,7 @@ module.exports = {
     apiKey: process.env.CLOUDINARY_API_KEY,
     apiSecret: process.env.CLOUDINARY_API_SECRET,
   },
-  corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+  corsOrigin: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',').map(s => s.trim()) : ['http://localhost:5173'],
   adminSeed: {
     email: process.env.ADMIN_SEED_EMAIL || 'admin@hexacarb.com',
     password: process.env.ADMIN_SEED_PASSWORD || 'Admin@123',
