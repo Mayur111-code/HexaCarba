@@ -30,12 +30,16 @@ export const AuthProvider = ({ children }) => {
   }, [loadUser]);
 
   const login = async (email, password) => {
-    const { data } = await authService.login(email, password);
-    localStorage.setItem('hexacarb_token', data.data.accessToken);
-    localStorage.setItem('hexacarb_refresh', data.data.refreshToken);
-    localStorage.setItem('hexacarb_user', JSON.stringify(data.data.user));
-    setUser(data.data.user);
-    return data;
+    const res = await authService.login(email, password);
+    const body = res.data;
+    if (!body.data?.accessToken || !body.data?.refreshToken) {
+      throw new Error('Invalid login response: missing tokens');
+    }
+    localStorage.setItem('hexacarb_token', body.data.accessToken);
+    localStorage.setItem('hexacarb_refresh', body.data.refreshToken);
+    localStorage.setItem('hexacarb_user', JSON.stringify(body.data.user));
+    setUser(body.data.user);
+    return body;
   };
 
   const logout = async () => {

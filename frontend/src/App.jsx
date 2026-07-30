@@ -27,8 +27,12 @@ import ContactPage from './pages/public/ContactPage';
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
+  const hasToken = !!localStorage.getItem('hexacarb_token');
   if (loading) return <Loader fullScreen />;
-  if (!isAuthenticated) return <Navigate to="/admin/login" replace />;
+  if (!isAuthenticated) {
+    if (hasToken) return <Loader fullScreen />;
+    return <Navigate to="/admin/login" replace />;
+  }
   return children;
 };
 

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, Navigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthContext';
@@ -8,7 +8,6 @@ import { HiLockClosed } from 'react-icons/hi2';
 
 const LoginPage = () => {
   const { login, isAuthenticated, loading: authLoading } = useAuth();
-  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const { register, handleSubmit, formState: { errors } } = useForm();
@@ -21,9 +20,9 @@ const LoginPage = () => {
     try {
       await login(data.email, data.password);
       toast.success('Welcome back!');
-      navigate('/admin/dashboard');
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Login failed');
+      console.error('[Login Error]', err.response ? `HTTP ${err.response.status}` : 'Network error', err.response?.data || err.message);
+      toast.error(err.response?.data?.message || `Login failed${err.response ? '' : ' — check console or CORS configuration'}`);
     } finally { setSubmitting(false); }
   };
 
