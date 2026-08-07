@@ -1,8 +1,6 @@
 import axios from 'axios';
 import { API_BASE_URL } from '../constants';
 
-console.log('[API] Base URL:', API_BASE_URL);
-
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: { 'Content-Type': 'application/json' },
@@ -14,7 +12,6 @@ api.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
-  console.log(`[API] ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`);
   return config;
 });
 
@@ -22,15 +19,13 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (!error.response) {
-      console.error('[API] Network error — no response from server:', error.message);
       return Promise.reject(error);
     }
-
-    console.error(`[API] Error ${error.response.status} on ${error.config?.method?.toUpperCase()} ${error.config?.url}:`, error.response.data);
 
     const originalRequest = error.config;
     if (
       error.response.status === 401 &&
+      originalRequest &&
       !originalRequest._retry &&
       !originalRequest.url?.includes('/auth/')
     ) {
@@ -43,7 +38,6 @@ api.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${data.data.accessToken}`;
         return api(originalRequest);
       } catch (refreshErr) {
-        console.error('[API] Token refresh failed:', refreshErr.response?.data || refreshErr.message);
         localStorage.removeItem('hexacarb_token');
         localStorage.removeItem('hexacarb_refresh');
         localStorage.removeItem('hexacarb_user');

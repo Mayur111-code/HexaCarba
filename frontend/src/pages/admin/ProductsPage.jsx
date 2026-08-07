@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useDebounce } from '../../hooks/useDebounce';
 import { usePagination } from '../../hooks/usePagination';
+import { resolveAssetUrl } from '../../utils/assets';
 
 const ProductsPage = () => {
   const [products, setProducts] = useState([]);
@@ -104,7 +105,7 @@ const ProductsPage = () => {
                   <tr key={product._id} className="hover:bg-gray-50">
                     <td className="px-4 py-3">
                       {product.images?.[0]?.url ? (
-                        <img src={product.images[0].url} alt="" className="w-10 h-10 rounded object-cover" />
+                        <img src={resolveAssetUrl(product.images[0].url)} alt="" className="w-10 h-10 rounded object-cover" />
                       ) : (
                         <div className="w-10 h-10 rounded bg-gray-200 flex items-center justify-center">
                           <HiOutlineCube className="w-5 h-5 text-gray-400" />

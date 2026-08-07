@@ -62,8 +62,9 @@ const downloadSalaryPDF = async (req, res, next) => {
     const salary = await salaryService.getSalary(req.params.id);
     const pdfBuffer = await pdfService.generateSalaryPDF(salary);
 
-    const employee = salary.employee;
-    const fileName = `Salary_Slip_${employee.firstName}_${employee.lastName}_${salary.month}_${salary.year}.pdf`;
+    const employee = salary.employee || {};
+    const safePart = `${employee.firstName || 'Employee'}_${employee.lastName || ''}`.replace(/[^a-zA-Z0-9_-]/g, '');
+    const fileName = `Salary_Slip_${safePart}_${salary.month}_${salary.year}.pdf`;
 
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);

@@ -1,4 +1,5 @@
 const Category = require('../models/Category');
+const Product = require('../models/Product');
 const ApiError = require('../utils/ApiError');
 const { parsePagination, buildPaginationMeta, buildSearchFilter, generateUniqueSlug } = require('../utils/helpers');
 
@@ -60,8 +61,17 @@ const updateCategory = async (id, data) => {
 };
 
 const deleteCategory = async (id) => {
-  const category = await Category.findByIdAndDelete(id);
+  const category = await Category.findById(id);
   if (!category) throw ApiError.notFound('Category not found');
+
+  const productCount = await Product.countDocuments({ category: id });
+  if (productCount > 0) {
+    throw ApiError.badRequest(
+      `Cannot delete category "${category.name}" because ${productCount} product(s) are assigned to it`
+    );
+  }
+
+  await Category.findByIdAndDelete(id);
   return category;
 };
 

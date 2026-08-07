@@ -2,7 +2,17 @@ const productService = require('../services/productService');
 const ApiResponse = require('../utils/ApiResponse');
 const ApiError = require('../utils/ApiError');
 const Product = require('../models/Product');
-const { uploadToCloudinary, uploadPdfToCloudinary, deleteFromCloudinary } = require('../utils/cloudinaryUpload');
+const {
+  uploadToCloudinary,
+  uploadPdfToCloudinary,
+  deleteAsset,
+  deletePdfAsset,
+} = require('../utils/cloudinaryUpload');
+const {
+  resolveAssetUrl,
+  resolveImages,
+  resolveProductSheet,
+} = require('../utils/assetUrl');
 
 const createProduct = async (req, res, next) => {
   try {
@@ -34,6 +44,8 @@ const getPublicProducts = async (req, res, next) => {
 const getProduct = async (req, res, next) => {
   try {
     const product = await productService.getProduct(req.params.id);
+    product.images = resolveImages(product.images);
+    product.productSheet = resolveProductSheet(product.productSheet);
     ApiResponse.success(res, product);
   } catch (error) {
     next(error);
@@ -43,6 +55,11 @@ const getProduct = async (req, res, next) => {
 const getPublicProductBySlug = async (req, res, next) => {
   try {
     const { product, relatedProducts } = await productService.getPublicProductBySlug(req.params.slug);
+    product.images = resolveImages(product.images);
+    product.productSheet = resolveProductSheet(product.productSheet);
+    relatedProducts.forEach((rp) => {
+      rp.images = resolveImages(rp.images);
+    });
     ApiResponse.success(res, { product, relatedProducts });
   } catch (error) {
     next(error);
@@ -52,6 +69,8 @@ const getPublicProductBySlug = async (req, res, next) => {
 const updateProduct = async (req, res, next) => {
   try {
     const product = await productService.updateProduct(req.params.id, req.body);
+    product.images = resolveImages(product.images);
+    product.productSheet = resolveProductSheet(product.productSheet);
     ApiResponse.success(res, product, 'Product updated successfully');
   } catch (error) {
     next(error);
@@ -92,12 +111,12 @@ const uploadImages = async (req, res, next) => {
         const result = await uploadToCloudinary(file.path, 'hexacarb/products');
         uploadedImages.push({
           public_id: result.public_id,
-          url: result.url,
+          url: resolveAssetUrl(result.url),
           isMain: uploadedImages.length === 0 && product.images.length === 0,
           order: product.images.length + uploadedImages.length,
         });
       } catch (uploadErr) {
-        // If Cloudinary fails, store locally
+        // If Cloudinary fails, store locally (file is kept on disk)
         const localUrl = `/uploads/${file.filename}`;
         uploadedImages.push({
           public_id: `local-${file.filename}`,
@@ -111,6 +130,7 @@ const uploadImages = async (req, res, next) => {
     product.images.push(...uploadedImages);
     await product.save();
 
+    product.images = resolveImages(product.images);
     ApiResponse.success(res, product, 'Images uploaded successfully');
   } catch (error) {
     next(error);
@@ -126,13 +146,12 @@ const deleteImage = async (req, res, next) => {
     const image = product.images.id(imageId);
     if (!image) throw ApiError.notFound('Image not found');
 
-    if (image.public_id && !image.public_id.startsWith('local-')) {
-      await deleteFromCloudinary(image.public_id).catch(() => {});
-    }
+    await deleteAsset(image);
 
     product.images.pull(imageId);
     await product.save();
 
+    product.images = resolveImages(product.images);
     ApiResponse.success(res, product, 'Image deleted successfully');
   } catch (error) {
     next(error);
@@ -153,6 +172,7 @@ const setMainImage = async (req, res, next) => {
     });
     await product.save();
 
+    product.images = resolveImages(product.images);
     ApiResponse.success(res, product, 'Main image updated');
   } catch (error) {
     next(error);
@@ -167,15 +187,13 @@ const uploadProductSheet = async (req, res, next) => {
 
     if (!req.file) throw ApiError.badRequest('No PDF file uploaded');
 
-    if (product.productSheet?.public_id && !product.productSheet.public_id.startsWith('local-')) {
-      await deleteFromCloudinary(product.productSheet.public_id, 'raw').catch(() => {});
-    }
+    await deletePdfAsset(product.productSheet);
 
     try {
       const result = await uploadPdfToCloudinary(req.file.path, req.file.originalname, 'hexacarb/product-sheets');
       product.productSheet = {
         public_id: result.public_id,
-        url: result.url,
+        url: resolveAssetUrl(result.url),
         fileName: result.fileName,
       };
     } catch {
@@ -187,6 +205,7 @@ const uploadProductSheet = async (req, res, next) => {
     }
 
     await product.save();
+    product.productSheet = resolveProductSheet(product.productSheet);
     ApiResponse.success(res, product, 'Product sheet uploaded');
   } catch (error) {
     next(error);

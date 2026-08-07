@@ -1,6 +1,18 @@
 const Product = require('../models/Product');
 const ApiError = require('../utils/ApiError');
 const { parsePagination, buildPaginationMeta, buildSearchFilter, generateUniqueSlug } = require('../utils/helpers');
+const { resolveImages, resolveProductSheet } = require('../utils/assetUrl');
+const { deletePdfAsset, deleteAsset } = require('../utils/cloudinaryUpload');
+
+const applyAssetUrls = (products) => {
+  if (!products) return products;
+  const list = Array.isArray(products) ? products : [products];
+  list.forEach((p) => {
+    if (p.images) p.images = resolveImages(p.images);
+    if (p.productSheet) p.productSheet = resolveProductSheet(p.productSheet);
+  });
+  return products;
+};
 
 const createProduct = async (data) => {
   data.slug = await generateUniqueSlug(Product, data.name);
@@ -33,7 +45,7 @@ const getProducts = async (query) => {
   ]);
 
   return {
-    data: products,
+    data: applyAssetUrls(products),
     pagination: buildPaginationMeta(total, page, limit),
   };
 };
@@ -54,7 +66,7 @@ const getPublicProducts = async (query) => {
 
   const [products, total] = await Promise.all([
     Product.find(filter)
-      .select('name slug shortDescription images category createdAt')
+      .select('name slug shortDescription images productSheet category createdAt')
       .populate('category', 'name slug')
       .sort(sort)
       .skip(skip)
@@ -64,7 +76,7 @@ const getPublicProducts = async (query) => {
   ]);
 
   return {
-    data: products,
+    data: applyAssetUrls(products),
     pagination: buildPaginationMeta(total, page, limit),
   };
 };
@@ -104,6 +116,14 @@ const updateProduct = async (id, data) => {
     data.slug = await generateUniqueSlug(Product, data.name, id);
   }
 
+  // Removing the sheet from the admin UI: clean up the stored file too.
+  if (data.productSheet === null) {
+    const existing = await Product.findById(id);
+    if (existing && existing.productSheet) {
+      await deletePdfAsset(existing.productSheet);
+    }
+  }
+
   const product = await Product.findByIdAndUpdate(id, data, {
     new: true,
     runValidators: true,
@@ -113,8 +133,15 @@ const updateProduct = async (id, data) => {
 };
 
 const deleteProduct = async (id) => {
-  const product = await Product.findByIdAndDelete(id);
+  const product = await Product.findById(id);
   if (!product) throw ApiError.notFound('Product not found');
+
+  for (const image of product.images || []) {
+    await deleteAsset(image);
+  }
+  await deletePdfAsset(product.productSheet);
+
+  await Product.findByIdAndDelete(id);
   return product;
 };
 

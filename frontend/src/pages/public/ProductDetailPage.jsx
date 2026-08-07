@@ -5,6 +5,7 @@ import { productService } from '../../services/productService';
 import Loader from '../../components/common/Loader';
 import { HiOutlineDownload, HiOutlineShare, HiOutlineCube, HiOutlineCheck } from 'react-icons/hi';
 import { FadeIn, SlideInLeft, SlideInRight, StaggerChildren, StaggerItem, TiltCard } from '../../components/animations/AnimatedComponents';
+import { resolveAssetUrl } from '../../utils/assets';
 import toast from 'react-hot-toast';
 
 const ProductDetailPage = () => {
@@ -79,7 +80,7 @@ const ProductDetailPage = () => {
                   >
                     {product.images?.[activeImage]?.url ? (
                       <img
-                        src={product.images[activeImage].url}
+                        src={resolveAssetUrl(product.images[activeImage].url)}
                         alt={product.name}
                         className="w-full h-full object-contain"
                       />
@@ -102,7 +103,7 @@ const ProductDetailPage = () => {
                         i === activeImage ? 'border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.3)]' : 'border-white/10 hover:border-white/30'
                       }`}
                     >
-                      <img src={img.url} alt="" className="w-full h-full object-cover" />
+                      <img src={resolveAssetUrl(img.url)} alt="" className="w-full h-full object-cover" />
                     </motion.button>
                   ))}
                 </div>
@@ -119,7 +120,7 @@ const ProductDetailPage = () => {
             <div className="flex flex-wrap gap-3 mb-10">
               {product.productSheet?.url && (
                 <motion.a
-                  href={product.productSheet.url}
+                  href={resolveAssetUrl(product.productSheet.url)}
                   target="_blank"
                   rel="noopener noreferrer"
                   whileHover={{ scale: 1.02 }}
@@ -204,7 +205,7 @@ const ProductDetailPage = () => {
                     <Link to={`/products/${rp.slug}`} className="block glass-hover overflow-hidden group">
                       <div className="aspect-square bg-gradient-to-br from-gray-900 to-black flex items-center justify-center overflow-hidden">
                         {rp.images?.[0]?.url ? (
-                          <motion.img src={rp.images[0].url} alt={rp.name} className="w-full h-full object-cover" whileHover={{ scale: 1.1 }} transition={{ duration: 0.4 }} />
+                          <motion.img src={resolveAssetUrl(rp.images[0].url)} alt={rp.name} className="w-full h-full object-cover" whileHover={{ scale: 1.1 }} transition={{ duration: 0.4 }} />
                         ) : (
                           <HiOutlineCube className="w-10 h-10 text-gray-700" />
                         )}

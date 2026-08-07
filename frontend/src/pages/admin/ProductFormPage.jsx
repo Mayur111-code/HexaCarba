@@ -15,6 +15,7 @@ import {
   HiOutlineStar,
 } from 'react-icons/hi';
 import Loader from '../../components/common/Loader';
+import { resolveAssetUrl } from '../../utils/assets';
 
 const ProductFormPage = () => {
   const { id } = useParams();
@@ -322,7 +323,7 @@ const ProductFormPage = () => {
                   }`}
                 >
                   <img
-                    src={img.url || img.preview}
+                    src={img.isNew ? img.preview : resolveAssetUrl(img.url)}
                     alt={`Product ${idx + 1}`}
                     className="w-full aspect-square object-cover"
                   />
@@ -417,7 +418,7 @@ const ProductFormPage = () => {
                   <p className="text-sm font-medium">{productSheet.fileName || 'Product Sheet'}</p>
                   <p className="text-xs text-gray-400">
                     {productSheet.url ? (
-                      <a href={productSheet.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                      <a href={resolveAssetUrl(productSheet.url)} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
                         View PDF
                       </a>
                     ) : (

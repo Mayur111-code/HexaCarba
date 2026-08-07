@@ -11,6 +11,7 @@ import { useDebounce } from '../../hooks/useDebounce';
 import { usePagination } from '../../hooks/usePagination';
 import { FadeIn, StaggerChildren, StaggerItem, BlurReveal, TiltCard } from '../../components/animations/AnimatedComponents';
 import ContentImage from '../../components/common/ContentImage';
+import { resolveAssetUrl } from '../../utils/assets';
 import { productsIntro } from '../../data/siteContent';
 
 const ProductsPage = () => {
@@ -136,7 +137,7 @@ const ProductsPage = () => {
                         <div className="aspect-[4/3] bg-gradient-to-br from-gray-900 to-black flex items-center justify-center overflow-hidden">
                           {product.images?.[0]?.url ? (
                             <motion.img
-                              src={product.images[0].url}
+                              src={resolveAssetUrl(product.images[0].url)}
                               alt={product.name}
                               className="w-full h-full object-cover"
                               whileHover={{ scale: 1.1 }}

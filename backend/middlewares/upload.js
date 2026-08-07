@@ -1,11 +1,14 @@
 const multer = require('multer');
 const path = require('path');
 const ApiError = require('../utils/ApiError');
+const config = require('../config/env');
 const { FILE_LIMITS, ALLOWED_IMAGE_TYPES, ALLOWED_PDF_TYPES } = require('../utils/constants');
+
+const uploadDir = path.join(__dirname, '..', config.uploadDir);
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, '..', 'uploads'));
+    cb(null, uploadDir);
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);

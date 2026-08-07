@@ -1,3 +1,4 @@
+const multer = require('multer');
 const ApiError = require('../utils/ApiError');
 
 const errorHandler = (err, req, res, next) => {
@@ -20,6 +21,19 @@ const errorHandler = (err, req, res, next) => {
   if (err.name === 'ValidationError') {
     const errors = Object.values(err.errors).map((e) => e.message);
     error = ApiError.badRequest('Validation failed', errors);
+  }
+
+  if (err.name === 'MulterError') {
+    const messages = {
+      LIMIT_FILE_SIZE: 'File is too large. Please upload a smaller file.',
+      LIMIT_FILE_COUNT: 'Too many files uploaded.',
+      LIMIT_UNEXPECTED_FILE: 'Unexpected file field. Check the upload field name.',
+    };
+    error = ApiError.badRequest(messages[err.code] || err.message);
+  }
+
+  if (err instanceof multer.MulterError) {
+    error = ApiError.badRequest(err.message);
   }
 
   const statusCode = error.statusCode || 500;
