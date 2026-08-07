@@ -415,7 +415,7 @@ const ProductFormPage = () => {
                   <HiOutlineDocumentText className="w-5 h-5 text-red-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium">{productSheet.fileName || 'Product Sheet'}</p>
+                  <p className="text-sm font-medium">{productSheet.name || productSheet.fileName || 'Product Sheet'}</p>
                   <p className="text-xs text-gray-400">
                     {productSheet.url ? (
                       <a href={resolveAssetUrl(productSheet.url)} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">

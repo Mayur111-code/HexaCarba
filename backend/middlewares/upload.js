@@ -1,21 +1,10 @@
 const multer = require('multer');
-const path = require('path');
 const ApiError = require('../utils/ApiError');
-const config = require('../config/env');
 const { FILE_LIMITS, ALLOWED_IMAGE_TYPES, ALLOWED_PDF_TYPES } = require('../utils/constants');
 
-const uploadDir = path.join(__dirname, '..', config.uploadDir);
-
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, uploadDir);
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    const ext = path.extname(file.originalname);
-    cb(null, file.fieldname + '-' + uniqueSuffix + ext);
-  },
-});
+// Memory storage only — files are streamed straight to ImageKit and never
+// touch the server filesystem (ephemeral on Render).
+const storage = multer.memoryStorage();
 
 const imageFileFilter = (req, file, cb) => {
   if (ALLOWED_IMAGE_TYPES.includes(file.mimetype)) {

@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema(
       default: 'admin',
     },
     avatar: {
-      public_id: String,
+      fileId: String,
       url: String,
     },
     isActive: {

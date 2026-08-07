@@ -1,15 +1,14 @@
-const config = require('../config/env');
-
 /**
- * Returns an absolute URL for a stored asset.
- * - Absolute URLs (Cloudinary, full http) are returned unchanged.
- * - Relative /uploads/... paths are prefixed with SERVER_URL so they work
- *   from any frontend origin (Vercel, Render, localhost).
+ * Asset URL helpers.
+ *
+ * All assets are stored in ImageKit, so every stored URL is an absolute
+ * https URL. Relative paths may only exist on legacy records — they are
+ * returned unchanged (no local file server exists anymore) so the frontend
+ * can show its fallback gracefully.
  */
 const resolveAssetUrl = (url) => {
   if (!url || typeof url !== 'string') return url;
   if (/^https?:\/\//i.test(url) || url.startsWith('//')) return url;
-  if (config.serverUrl) return `${config.serverUrl}${url.startsWith('/') ? url : `/${url}`}`;
   return url;
 };
 

@@ -77,13 +77,13 @@ const employeeSchema = new mongoose.Schema(
     bankAccountNo: { type: String, trim: true },
     ifscCode: { type: String, trim: true },
     avatar: {
-      public_id: String,
+      fileId: String,
       url: String,
     },
     documents: [
       {
         name: String,
-        public_id: String,
+        fileId: String,
         url: String,
       },
     ],

@@ -2,7 +2,7 @@ const Product = require('../models/Product');
 const ApiError = require('../utils/ApiError');
 const { parsePagination, buildPaginationMeta, buildSearchFilter, generateUniqueSlug } = require('../utils/helpers');
 const { resolveImages, resolveProductSheet } = require('../utils/assetUrl');
-const { deletePdfAsset, deleteAsset } = require('../utils/cloudinaryUpload');
+const { deleteImage, deletePdf } = require('./imagekitService');
 
 const applyAssetUrls = (products) => {
   if (!products) return products;
@@ -120,7 +120,7 @@ const updateProduct = async (id, data) => {
   if (data.productSheet === null) {
     const existing = await Product.findById(id);
     if (existing && existing.productSheet) {
-      await deletePdfAsset(existing.productSheet);
+      await deletePdf(existing.productSheet);
     }
   }
 
@@ -137,9 +137,9 @@ const deleteProduct = async (id) => {
   if (!product) throw ApiError.notFound('Product not found');
 
   for (const image of product.images || []) {
-    await deleteAsset(image);
+    await deleteImage(image);
   }
-  await deletePdfAsset(product.productSheet);
+  await deletePdf(product.productSheet);
 
   await Product.findByIdAndDelete(id);
   return product;

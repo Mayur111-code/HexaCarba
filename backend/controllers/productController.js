@@ -3,13 +3,13 @@ const ApiResponse = require('../utils/ApiResponse');
 const ApiError = require('../utils/ApiError');
 const Product = require('../models/Product');
 const {
-  uploadToCloudinary,
-  uploadPdfToCloudinary,
-  deleteAsset,
-  deletePdfAsset,
-} = require('../utils/cloudinaryUpload');
+  uploadImage,
+  uploadPdf,
+  deleteImage: deleteImagekitImage,
+  deletePdf: deleteImagekitPdf,
+  deleteFile: deleteFileById,
+} = require('../services/imagekitService');
 const {
-  resolveAssetUrl,
   resolveImages,
   resolveProductSheet,
 } = require('../utils/assetUrl');
@@ -106,27 +106,27 @@ const uploadImages = async (req, res, next) => {
     }
 
     const uploadedImages = [];
-    for (const file of req.files) {
-      try {
-        const result = await uploadToCloudinary(file.path, 'hexacarb/products');
+    try {
+      for (const file of req.files) {
+        const result = await uploadImage(file.buffer, file.originalname);
         uploadedImages.push({
-          public_id: result.public_id,
-          url: resolveAssetUrl(result.url),
-          isMain: uploadedImages.length === 0 && product.images.length === 0,
-          order: product.images.length + uploadedImages.length,
-        });
-      } catch (uploadErr) {
-        // If Cloudinary fails, store locally (file is kept on disk)
-        const localUrl = `/uploads/${file.filename}`;
-        uploadedImages.push({
-          public_id: `local-${file.filename}`,
-          url: localUrl,
+          fileId: result.fileId,
+          url: result.url,
+          name: result.name,
           isMain: uploadedImages.length === 0 && product.images.length === 0,
           order: product.images.length + uploadedImages.length,
         });
       }
+} catch (uploadErr) {
+      // Roll back any images already pushed to ImageKit so no orphans remain.
+      for (const img of uploadedImages) {
+        await deleteFileById(img.fileId);
+      }
+      console.error('ImageKit Upload Error (full SDK error):');
+      console.error(uploadErr);
+      console.error('ImageKit Upload Error message:', uploadErr && uploadErr.message);
+      throw ApiError.badRequest(`Image upload failed: ${uploadErr && uploadErr.message}`);
     }
-
     product.images.push(...uploadedImages);
     await product.save();
 
@@ -146,7 +146,7 @@ const deleteImage = async (req, res, next) => {
     const image = product.images.id(imageId);
     if (!image) throw ApiError.notFound('Image not found');
 
-    await deleteAsset(image);
+    await deleteImagekitImage(image);
 
     product.images.pull(imageId);
     await product.save();
@@ -187,22 +187,28 @@ const uploadProductSheet = async (req, res, next) => {
 
     if (!req.file) throw ApiError.badRequest('No PDF file uploaded');
 
-    await deletePdfAsset(product.productSheet);
-
+    // Replace semantics — upload the new asset first, then delete the old one
+    // from ImageKit, then persist. A failed upload therefore never leaves
+    // the product without a working sheet.
+    let result;
     try {
-      const result = await uploadPdfToCloudinary(req.file.path, req.file.originalname, 'hexacarb/product-sheets');
-      product.productSheet = {
-        public_id: result.public_id,
-        url: resolveAssetUrl(result.url),
-        fileName: result.fileName,
-      };
-    } catch {
-      product.productSheet = {
-        public_id: `local-${req.file.filename}`,
-        url: `/uploads/${req.file.filename}`,
-        fileName: req.file.originalname,
-      };
+      result = await uploadPdf(req.file.buffer, req.file.originalname);
+    } catch (uploadErr) {
+      console.error('ImageKit Sheet Upload Error (full SDK error):');
+      console.error(uploadErr);
+      console.error('ImageKit Sheet Upload Error message:', uploadErr && uploadErr.message);
+      throw ApiError.badRequest(
+        `PDF upload failed: ${uploadErr && uploadErr.message}`
+      );
     }
+
+    await deleteImagekitPdf(product.productSheet);
+
+    product.productSheet = {
+      fileId: result.fileId,
+      url: result.url,
+      name: result.name,
+    };
 
     await product.save();
     product.productSheet = resolveProductSheet(product.productSheet);

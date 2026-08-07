@@ -28,18 +28,11 @@ module.exports = {
     process.env.MONGODB_URI ||
     process.env.MONGO_URI ||
     'mongodb://127.0.0.1:27017/hexacarb',
-  serverUrl: (process.env.SERVER_URL || '').replace(/\/+$/, ''),
-  clientUrl: (process.env.CLIENT_URL || '').replace(/\/+$/, ''),
   jwt: {
     secret: process.env.JWT_SECRET || 'default_jwt_secret',
     refreshSecret: process.env.JWT_REFRESH_SECRET || 'default_refresh_secret',
     expire: process.env.JWT_EXPIRE || '7d',
     refreshExpire: process.env.JWT_REFRESH_EXPIRE || '30d',
-  },
-  cloudinary: {
-    cloudName: process.env.CLOUDINARY_CLOUD_NAME,
-    apiKey: process.env.CLOUDINARY_API_KEY,
-    apiSecret: process.env.CLOUDINARY_API_SECRET,
   },
   corsOrigin: toArray(process.env.CORS_ORIGIN) || toArray(process.env.CLIENT_URL) || ['http://localhost:5173'],
   // Express 'trust proxy' setting. Behind a single proxy (e.g. Render/Vercel) use 1.
@@ -50,8 +43,6 @@ module.exports = {
     loginWindowMs: 15 * 60 * 1000,
     loginMax: parsePort(process.env.LOGIN_RATE_LIMIT_MAX, 20),
   },
-  uploadDir: process.env.UPLOAD_DIR || 'uploads',
-  maxFileSize: parsePort(process.env.MAX_FILE_SIZE, 5 * 1024 * 1024),
   adminSeed: {
     email: process.env.ADMIN_SEED_EMAIL || 'admin@hexacarb.com',
     password: process.env.ADMIN_SEED_PASSWORD || 'Admin@123',

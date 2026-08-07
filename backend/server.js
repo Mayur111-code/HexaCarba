@@ -6,7 +6,6 @@ const compression = require('compression');
 const mongoSanitize = require('express-mongo-sanitize');
 const cookieParser = require('cookie-parser');
 const rateLimit = require('express-rate-limit');
-const path = require('path');
 const connectDB = require('./config/db');
 const config = require('./config/env');
 const errorHandler = require('./middlewares/errorHandler');
@@ -55,16 +54,6 @@ app.use(mongoSanitize());
 if (config.nodeEnv !== 'test') {
   app.use(morgan(config.isProduction ? 'combined' : 'dev'));
 }
-
-// Uploaded files — served directly, cached for performance.
-app.use(
-  '/uploads',
-  express.static(path.join(__dirname, config.uploadDir), {
-    maxAge: config.isProduction ? '7d' : 0,
-    etag: true,
-    index: false,
-  })
-);
 
 // Global API rate limit — 500 requests / 15 min per IP (config overridable).
 const limiter = rateLimit({

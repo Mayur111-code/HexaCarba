@@ -39,16 +39,17 @@ const productSchema = new mongoose.Schema(
     ],
     images: [
       {
-        public_id: String,
+        fileId: String,
         url: String,
+        name: String,
         isMain: { type: Boolean, default: false },
         order: { type: Number, default: 0 },
       },
     ],
     productSheet: {
-      public_id: String,
+      fileId: String,
       url: String,
-      fileName: String,
+      name: String,
     },
     status: {
       type: String,

@@ -55,7 +55,7 @@ const DownloadsPage = () => {
                         <HiOutlineDocumentText className="w-5 h-5 text-red-400" />
                       </div>
                       <div className="min-w-0">
-                        <h3 className="font-medium truncate">{sheet.productSheet.fileName || `${sheet.name} — Product Sheet`}</h3>
+                        <h3 className="font-medium truncate">{sheet.productSheet.name || sheet.productSheet.fileName || `${sheet.name} — Product Sheet`}</h3>
                         <p className="text-sm text-gray-500 truncate">{sheet.name}{sheet.category?.name ? ` · ${sheet.category.name}` : ''}</p>
                       </div>
                     </div>
@@ -71,7 +71,7 @@ const DownloadsPage = () => {
                       </a>
                       <a
                         href={resolveAssetUrl(sheet.productSheet.url)}
-                        download={sheet.productSheet.fileName || 'product-sheet.pdf'}
+                        download={sheet.productSheet.name || sheet.productSheet.fileName || 'product-sheet.pdf'}
                         className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-blue-400 border border-blue-500/20 rounded-xl hover:bg-blue-500/10 hover:border-blue-500/40 transition-all"
                       >
                         <HiOutlineDownload className="w-4 h-4" /> PDF

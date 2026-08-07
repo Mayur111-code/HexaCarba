@@ -21,7 +21,7 @@ const categorySchema = new mongoose.Schema(
       maxlength: 500,
     },
     image: {
-      public_id: String,
+      fileId: String,
       url: String,
     },
     isActive: {
