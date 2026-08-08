@@ -55,9 +55,9 @@ const PublicLayout = () => {
             <Link to="/" className="flex items-center gap-3 group">
               <ContentImage
                 src={images.logo}
-                alt={company.name}
+                alt="HexaCarba Logo"
                 className="h-10 w-auto max-w-[120px] object-contain"
-                fallbackLabel={company.name}
+                fallbackLabel="HexaCarba Logo"
               />
               <div className="hidden sm:block">
                 <div className="font-bold text-base leading-tight text-white">{company.name}</div>
@@ -133,9 +133,9 @@ const PublicLayout = () => {
               <div className="flex items-center gap-3 mb-4">
                 <ContentImage
                   src={images.logo}
-                  alt={company.name}
+                  alt="HexaCarba Logo"
                   className="h-10 w-auto max-w-[120px] object-contain"
-                  fallbackLabel={company.name}
+                  fallbackLabel="HexaCarba Logo"
                 />
                 <div>
                   <div className="font-bold text-white">{company.name}</div>

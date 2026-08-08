@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { images } from '../data/images';
 import {
   HiOutlineHome, HiOutlineUsers, HiOutlineCurrencyDollar, HiOutlineTag,
   HiOutlineCube, HiOutlineOfficeBuilding, HiOutlineMail, HiOutlineUserCircle,
-  HiOutlineLogout, HiOutlineMenu, HiOutlineX, HiOutlineSparkles,
+  HiOutlineLogout, HiOutlineMenu, HiOutlineX,
 } from 'react-icons/hi';
 
 const navItems = [
@@ -34,7 +35,7 @@ const AdminLayout = () => {
       <aside className={`fixed inset-y-0 left-0 z-50 w-72 bg-slate-950 text-white shadow-2xl transition-transform duration-300 lg:sticky lg:top-0 lg:h-screen lg:shadow-none ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
         <div className="flex h-20 items-center justify-between border-b border-white/10 px-6">
           <Link to="/admin/dashboard" className="flex items-center gap-3 font-bold tracking-tight">
-            <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-blue-400 to-indigo-600 shadow-lg shadow-blue-900/40"><HiOutlineSparkles className="h-5 w-5" /></span>
+            <img src={images.logo} alt="HexaCarba Logo" className="h-10 w-auto max-w-[140px] object-contain" />
             <span className="text-lg">HEXACARB<span className="text-blue-400">.</span></span>
           </Link>
           <button aria-label="Close navigation" className="rounded-lg p-2 hover:bg-white/10 lg:hidden" onClick={() => setSidebarOpen(false)}><HiOutlineX className="h-5 w-5" /></button>

@@ -1,5 +1,5 @@
 export const images = {
-  logo: '/assets/images/logo.svg',
+  logo: '/hexalogo',
 
   hero: {
     background: 'https://images.unsplash.com/photo-1581093450021-4a7360c5a5c5?w=1920&q=80',
@@ -38,7 +38,7 @@ export const images = {
   about: {
     intro: 'https://images.unsplash.com/photo-1565008447742-97f6a30f4c7e?w=1200&q=80',
     facility: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=1280&q=80',
-    director: '/assets/images/about/director.svg',
+    director: '/abaoutdirectorimg',
     videoPoster: '/assets/images/about/video-poster.svg',
   },
 

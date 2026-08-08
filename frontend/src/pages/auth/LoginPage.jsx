@@ -3,7 +3,8 @@ import { Navigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthContext';
-import { HiOutlineMail, HiOutlineEye, HiOutlineEyeOff, HiOutlineShieldCheck, HiOutlineSparkles } from 'react-icons/hi';
+import { images } from '../../data/images';
+import { HiOutlineMail, HiOutlineEye, HiOutlineEyeOff, HiOutlineShieldCheck } from 'react-icons/hi';
 import { HiLockClosed } from 'react-icons/hi2';
 
 const LoginPage = () => {
@@ -32,7 +33,7 @@ const LoginPage = () => {
       <div className="pointer-events-none absolute -right-24 bottom-0 h-96 w-96 rounded-full bg-indigo-500/20 blur-3xl" />
 
       <section className="relative z-10 hidden flex-col justify-between border-r border-white/10 bg-white/[0.025] p-12 lg:flex xl:p-16">
-        <div className="flex items-center gap-3 text-white"><span className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-blue-400 to-indigo-600 shadow-lg shadow-blue-950/50"><HiOutlineSparkles className="h-5 w-5" /></span><span className="text-xl font-bold tracking-tight">HEXACARB<span className="text-blue-400">.</span></span></div>
+        <div className="flex items-center gap-3 text-white"><img src={images.logo} alt="HexaCarba Logo" className="h-12 w-auto max-w-[150px] object-contain" /></div>
         <div className="max-w-md"><p className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-blue-300">Admin workspace</p><h1 className="text-5xl font-bold leading-tight tracking-tight text-white">Everything you need, <span className="text-blue-400">in clear view.</span></h1><p className="mt-6 text-lg leading-8 text-slate-400">Manage your products, people, customers, and business activity from one secure place.</p></div>
         <div className="flex items-center gap-3 text-sm text-slate-400"><HiOutlineShieldCheck className="h-5 w-5 text-emerald-400" /> Protected administrative access</div>
       </section>
@@ -40,7 +41,7 @@ const LoginPage = () => {
       <section className="relative z-10 flex items-center justify-center lg:bg-white/[0.02]">
         <div className="w-full max-w-md">
           <div className="mb-8 text-center lg:text-left">
-            <div className="mx-auto mb-5 grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-blue-400 to-indigo-600 text-white shadow-xl shadow-blue-950/50 lg:hidden"><HiOutlineSparkles className="h-6 w-6" /></div>
+            <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-white/[0.06] border border-white/10 lg:hidden"><img src={images.logo} alt="HexaCarba Logo" className="h-10 w-auto max-w-[60px] object-contain" /></div>
             <p className="mb-2 text-sm font-medium text-blue-300">Welcome back</p>
             <h2 className="text-3xl font-bold tracking-tight text-white">Sign in to your account</h2>
             <p className="mt-2 text-sm text-slate-400">Use your administrator credentials to continue.</p>
